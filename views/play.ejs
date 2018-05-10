@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="./css/common.css">
+	<title><%= title%></title>
+	<script src="../js/jquery-2.1.3.min.js"></script>
+</head>
+<body>
+	<div id="play">
+		<ul id="mapList">
+			<% mapList.forEach((item)=>{ %>
+				<% if(item.isCheck){ %>
+					<li class="Sel" data-id="<%= item._id  %>"></li>
+				<% }else{ %>	
+					<li class="noSel"data-id="<%= item._id %>"></li>
+				<% } %>
+				
+			<% }) %>			
+		</ul>
+		
+	
+	</div>
+	<script>
+	//移动端最好用触摸事件：touchstart,click在移动端会有300毫秒的延迟
+		$('#mapList').on('touchstart','.noSel',function(){
+			var _id=this.dataset.id;
+			$.ajax({
+				url:'/api/winning',
+				data:{_id:_id},
+				dataType:'json',
+				success:function(data){
+					if(data.code===0){
+						this.attr('class','Sel');
+						alert("恭喜您获得"+data.good);
+						if(!$('.noSel').length){
+							updateMap();
+						}
+					}
+				}.bind($(this))
+			});
+		});
+
+		function updateMap(){
+			console.log('22211111122');
+			$.ajax({
+				url:'/admin/api/createMap',
+				data:{
+					number:$('.Sel').length
+				},
+				success:function(data){
+					window.location.reload();
+				}
+			})
+		}
+	</script>
+</body>
+</html>
